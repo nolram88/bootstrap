@@ -59,6 +59,16 @@
 
       if (!that.$element.parent().length) {
         that.$element.appendTo(document.body) // don't move modals dom position
+      } else {
+    	  var scrollPosition = [
+    	self.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft,
+    	self.pageYOffset || document.documentElement.scrollTop  || document.body.scrollTop
+    	];
+    	var parentBody = jQuery('html'); // IE7 workaround
+    	parentBody.data('scroll-position', scrollPosition)
+    	parentBody.data('previous-overflow', parentBody.css('overflow'))
+    	parentBody.css('overflow', 'hidden')
+    	window.scrollTo(scrollPosition[0], scrollPosition[1])
       }
 
       that.$element.show()
@@ -101,6 +111,11 @@
     this.$element
       .removeClass('in')
       .attr('aria-hidden', true)
+      
+    var html = jQuery('html')
+    var scrollPosition = html.data('scroll-position')
+    html.css('overflow', html.data('previous-overflow'))
+    window.scrollTo(scrollPosition[0], scrollPosition[1])
 
     $.support.transition && this.$element.hasClass('fade') ?
       this.$element
